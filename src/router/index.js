@@ -4,10 +4,8 @@ import Home from '@/components/Home'
 import Task from '@/components/Task'
 import Login from '@/components/Auth/Login'
 import Registration from '@/components/Auth/Registration'
-import Uimini from 'uimini/dist/css/uimini.min.css'
 
 Vue.use(Router)
-Vue.use(Uimini)
 
 export default new Router({
   mode: 'history',

@@ -88,31 +88,36 @@
 							)
 
 				// Show Input
-				.tag-list.tag-list--menu(
-					v-if="tagMenuShow"
-				)
-					input.tag-add--input(
-						type="text"
-						placeholder="New tag"
-						v-model="tagTitle"
-						@keyup.enter="newTag"
+				transition(name="fade")
+					.tag-list.tag-list--menu(
+						v-if="tagMenuShow"
 					)
-					.button.button-default(
-						@click="newTag"
-					) Send
+						input.tag-add--input(
+							type="text"
+							placeholder="New tag"
+							v-model="tagTitle"
+							@keyup.enter="newTag"
+						)
+						.button.button-default(
+							@click="newTag"
+						) Send
 
 				// All tags
 				.tag-list.tag-list--all
-					.ui-tag__wrapper(
-						v-for="tag in tags"
-						:key="tag.title"
+					transition-group(
+						enter-active-class="animated fadeInRight"
+						leave-active-class="animated fadeOutDown"
 					)
-						.ui-tag(
-							@click="addTagUsed(tag)"
-							:class="{used: tag.use}"
+						.ui-tag__wrapper(
+							v-for="tag in tags"
+							:key="tag.title"
 						)
-							span.tag-title {{ tag.title }}
-							span.button-close
+							.ui-tag(
+								@click="addTagUsed(tag)"
+								:class="{used: tag.use}"
+							)
+								span.tag-title {{ tag.title }}
+								span.button-close
 
 				.button-list
 					.button.button--round.button-primary(
@@ -152,7 +157,8 @@
 					title: this.tagTitle,
 					use: false
 				}
-				this.$store.dispatch('newTag', tag)
+				this.$store.dispatch('newTag', tag);
+				this.tagTitle = ''
 			},
 			newTask() {
 				if (this.taskTitle === '') {
