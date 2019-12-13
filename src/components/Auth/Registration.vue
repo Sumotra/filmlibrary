@@ -5,6 +5,7 @@
 				.auth
 					.auth__banner
 						h1.ui-title-1 Hello
+						img(src="../../assets/kino.png")
 					.auth__form
 						span.ui-title-1 Registration
 						form(
@@ -54,12 +55,13 @@
 								.buttons-list
 									button.button.button-primary(
 										type="submit"
-										:disabled="submitStatus === 'PENDING'"
-									) Registration
+									)
+										span(v-if="loading") Loading...
+										span(v-else) Registration
 									.buttons-list.buttons-list--info
 										p.submit-text(v-if="submitStatus === 'OK'") Thanks for your submission!
 										p.submit-text.submit-text_error(v-if="submitStatus === 'ERROR'") Please fill the form correctly.
-										p.submit-text(v-if="submitStatus === 'PENDING'") Sending...
+										p.submit-text(v-else) {{ submitStatus }}
 								.buttons-list.buttons-list--login
 									span Do you have account?
 										router-link(
@@ -94,21 +96,31 @@
 		},
 		methods: {
 			onSubmit () {
-				this.$v.$touch()
+				this.$v.$touch();
 				if (this.$v.$invalid) {
 					this.submitStatus = 'ERROR'
 				} else {
-					console.log('submit!');
 					const user = {
 						email: this.email,
 						password: this.password
-					}
-					console.log(user);
-					this.submitStatus = 'PENDING';
-					setTimeout(() => {
-						this.submitStatus = 'OK'
-					}, 500)
+					};
+					this.$store.dispatch('registerUser', user)
+						.then(() => {
+							console.log('REGISTER!');
+							this.submitStatus = 'OK';
+							this.$router.push('/')
+						})
+						.catch(err => {
+							console.log('error');
+							console.log(err);
+							this.submitStatus = err.message
+						})
 				}
+			}
+		},
+		computed: {
+			loading () {
+				return this.$store.getters.loading
 			}
 		}
 	}
@@ -123,6 +135,9 @@
 			min-width 500px
 		&__banner
 			flex-basis 45%
+			text-align center
+		img
+			width 80%
 
 	.form-item
 		position relative
@@ -163,8 +178,8 @@
 
 	.submit-text
 		font-size 13px
-		line-height 3em
-		margin-left 2px
+		line-height 1.3em
+		margin 14px 0 0 2px
 		&_error
 			color #fc5c65
 

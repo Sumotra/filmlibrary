@@ -13,6 +13,8 @@ import store from './store'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
+import 'firebase/messaging'
+import 'firebase/storage'
 
 Vue.use(
 	Vuelidate,
@@ -30,13 +32,13 @@ new Vue({
 	template: '<App/>',
 	created () {
 		var firebaseConfig = {
-				apiKey: "AIzaSyBtz3f1DR37D4SF0VkQAFmBMeAxH-GJzUs",
-				authDomain: "flmlbr.firebaseapp.com",
-				databaseURL: "https://flmlbr.firebaseio.com",
-				projectId: "flmlbr",
-				storageBucket: "flmlbr.appspot.com",
-				messagingSenderId: "729384397755",
-				appId: "1:729384397755:web:8ac0cd0f49a0143a36729e"
+				apiKey: 'AIzaSyBtz3f1DR37D4SF0VkQAFmBMeAxH-GJzUs',
+				authDomain: 'flmlbr.firebaseapp.com',
+				databaseURL: 'https://flmlbr.firebaseio.com',
+				projectId: 'flmlbr',
+				storageBucket: 'flmlbr.appspot.com',
+				messagingSenderId: '729384397755',
+				appId: '1:729384397755:web:8ac0cd0f49a0143a36729e'
 		};
 		// Initialize Firebase
 		firebase.initializeApp(firebaseConfig);

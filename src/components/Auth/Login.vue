@@ -5,6 +5,7 @@
 				.auth
 					.auth__banner
 						h1.ui-title-1 Hello
+						img(src="../../assets/kino.png")
 					.auth__form
 						span.ui-title-1 Login
 						form(
@@ -106,6 +107,9 @@
 			min-width 500px
 		&__banner
 			flex-basis 45%
+			text-align center
+		img
+			width 80%
 
 	.form-item
 		position relative
