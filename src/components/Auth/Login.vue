@@ -42,12 +42,11 @@
 								.buttons-list
 									button.button.button-primary(
 									type="submit"
-									:disabled="submitStatus === 'PENDING'"
 									) Login
 									.buttons-list.buttons-list--info
-										p.submit-text(v-if="submitStatus === 'OK'") Thanks for your submission!
+										p.submit-text(v-if="submitStatus === 'OK'") Welcome back!
 										p.submit-text.submit-text_error(v-if="submitStatus === 'ERROR'") Please fill the form correctly.
-										p.submit-text(v-if="submitStatus === 'PENDING'") Sending...
+										p.submit-text(v-else) {{ submitStatus }}
 								.buttons-list.buttons-list--login
 									span Need account?
 										router-link(
@@ -62,7 +61,6 @@
 			return {
 				email: '',
 				password: '',
-				repeatPassword: '',
 				submitStatus: null,
 			}
 		},
@@ -82,17 +80,27 @@
 				if (this.$v.$invalid) {
 					this.submitStatus = 'ERROR'
 				} else {
-					console.log('login!');
 					const user = {
 						email: this.email,
 						password: this.password
 					}
-					console.log(user);
-					this.submitStatus = 'PENDING';
-					setTimeout(() => {
-						this.submitStatus = 'OK'
-					}, 500)
+					this.$store.dispatch('loginUser', user)
+						.then(() => {
+							console.log('LOGIN!');
+							this.submitStatus = 'OK';
+							this.$router.push('/')
+						})
+						.catch(err => {
+							console.log('error');
+							console.log(err);
+							this.submitStatus = err.message
+						})
 				}
+			}
+		},
+		computed: {
+			loading () {
+				return this.$store.getters.loading
 			}
 		}
 	}

@@ -29,7 +29,9 @@
 									.task-item__main-info
 										span.ui-label.ui-label--light {{ task.whatWatch }}
 										span Total time: {{ task.time }}
-									span.button-close
+									span.button-close(
+										@click="deleteTask(task.id)"
+									)
 								.task-item__content
 									.task-item__header
 										.ui-checkbox-wrapper
@@ -48,15 +50,80 @@
 											)
 												.ui-tag
 													span.tag-title {{ tag.title }}
+											// Buttons
+											.buttons-list.buttons-edit-list
+												.button.button--round.button-default.activeButton(
+													@click="taskEdit(task.id, task.title, task.description)"
+												) Edit
 
-
+		// Edit popup
+		.ui-messageBox__wrapper(
+			v-if="editing"
+			:class="{active: editing}"
+		)
+			.ui-messageBox.fadeInDown
+				.ui-messageBox__header
+					span.messageBox-title {{ titleEditing }}
+					span.button-close(@click="cancelTaskEdit")
+				.ui-messageBox__content
+					p Title
+					input(
+						type="text"
+						v-model='titleEditing'
+					)
+					p Description
+					textarea(
+						type="text"
+						v-model='desrEditing'
+					)
+				.ui-messageBox__footer
+					.button.button-light.button--round(@click="cancelTaskEdit") Cancel
+					.button.button-primary.button--round(@click="finishTaskEdit") OK
 </template>
 
 <script>
 	export default {
 		data () {
 			return {
-				filter: 'active'
+				filter: 'active',
+				editing: false,
+				titleEditing: '',
+				desrEditing: '',
+				taskId: null
+			}
+		},
+		methods: {
+			// Edit
+			taskEdit (id, title, description) {
+				this.editing = !this.editing;
+				this.taskId = id;
+				this.titleEditing = title;
+				this.desrEditing = description
+			},
+			// Cancel button (POPUP)
+			cancelTaskEdit () {
+				this.editing = !this.editing;
+				// Reset
+				this.taskId = null;
+				this.titleEditing = '';
+				this.desrEditing = ''
+			},
+			// Done button
+			finishTaskEdit () {
+				this.$store.dispatch('editTask', {
+					id: this.taskId,
+					title: this.titleEditing,
+					description: this.desrEditing
+				})
+				this.editing = !this.editing
+			},
+			// Delete button
+			deleteTask (id) {
+				this.$store.dispatch('deleteTask', id)
+					.then(() => {
+						console.log('task deleted')
+						this.$store.dispatch('loadTasks')
+					})
 			}
 		},
 		computed: {
@@ -69,6 +136,10 @@
 					return this.$store.getters.tasks
 				}
 				return this.filter === 'active'
+			},
+			// Show loading status
+			loading () {
+				return this.$store.getters.loading
 			}
 		}
 	}
@@ -130,4 +201,25 @@
 
 	.task-item__footer
 		margin-top 14px
+
+	.buttons-edit-list
+		display flex
+		justify-content flex-end
+		margin-top 10px
+		.button
+			margin-right 12px
+			&:last-child
+				margin-right 0
+
+	.ui-messageBox__wrapper
+		&.active
+			display flex
+		.button-light
+			margin-right 8px
+
+	.ui-messageBox__content
+		p
+			margin-bottom 5px
+		textarea
+			font-family Arial, "Helvetica Neue", Helvetica, sans-serif
 </style>
